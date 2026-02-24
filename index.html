@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Afi CMD</title>
+    <link rel="shortcut icon" href="afilogo.png" type="image/x-icon">
     <style>
         input {
             background-color: grey;
@@ -125,7 +126,7 @@
                 return send_message(`'${commandname}' is not recognized as an internal or external command,operable program or batch file.`);
             }
             if (does === "hello" || does === "hi") {
-                send_message(`Hello, ${name}! I'm your assistance type afi help for helo`)
+                send_message(`Hello, ${name}! I'm your assistance type afi help for help`)
             } else if (does === "help") {
                 send_message(`Hey ${name}, I'm Afi. Here are the commands:
                 - help: See this list.
