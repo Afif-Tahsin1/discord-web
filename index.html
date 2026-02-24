@@ -168,7 +168,9 @@
                 messaged.remove();
                 send_message(`Message ${messagetd} has been deleted!`);
             }else if(does === "clear"){
-                const s = document.querySelectorAll("#messagelist li")
+                const allMessages = document.querySelectorAll("#messagelist li");
+                allMessages.forEach(msg => msg.remove());
+                messages = 0;
             }
             else {
                 send_message(`Unknown command: ${does}. To see all afi commands, type: afi help`)
