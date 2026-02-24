@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        input {
+            background-color: grey;
+            color: aliceblue;
+            height: 40px;
+            width: 350px;
+            margin-left: 70px;
+        }
+
+        div {
+            text-align: center;
+            background-color: black;
+            box-shadow: 10px 10px 10px grey;
+            width: 500px;
+            color: white;
+            margin-left: 30%;
+            border-radius: 50px;
+            display: flex;
+            flex-direction: column;
+            overflow: auto;
+
+        }
+
+        button {
+            margin-left: 10%;
+            width: 300px;
+            margin-bottom: 10px;
+            border-radius: 30px;
+            cursor: pointer;
+            padding: 20px;
+            font-size: 15px;
+        }
+
+        ol {
+            height: 200px;
+            overflow-y: auto;
+            list-style-type: none;
+        }
+
+        .usermessage {
+            text-align: right;
+        }
+
+        li {
+            background-color: cyan;
+            margin-top: 10px;
+            word-break: break-all;
+        }
+
+        .botmessage {
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="signin">
+        <h1>Name</h1>
+        <p>Enter your name here:</p>
+        <input type="text" id="name" placeholder="here...">
+        <p id="error"></p>
+        <button onclick="sign()">Done</button>
+    </div>
+    <div id="main" style="display: none;">
+        <p id="username"></p>
+        <input type="text" id="commands">
+        <button onclick="on_command_create()">Create commands</button>
+        <ol id="messagelist"></ol>
+    </div>
+
+    <script>
+        const fruits = ["rocket", "spin", "blade", "spring", "bomb", "smoke", "spike", "flame", "dark", "sand", "ice", "rubber", "eagle", "ghost", "light", "diamond", "quake", "magma", "love", "spider", "sound", "phoenix", "creation", "blizzard", "buddha", "portal", "shadow", "venom", "spirit", "mammonth", "gravity", "trex", "dough", "dough", "gas", "lightning", "tiger", "yeti", "kitsune", "control", "dragon", "dragoneast", "dragonweast"];
+        const botname = "Afi";
+        const messageL = document.getElementById("messagelist");
+        const errorp = document.getElementById("error");
+        let name;
+        let messages = 0;
+        const signdiv = document.getElementById("signin");
+            const maindiv = document.getElementById("main");
+        function sign() {
+            const user_name = document.getElementById("name").value;
+            const nameP = document.getElementById("username");
+            
+            if (user_name.length > 20 || user_name.length < 3) {
+                return errorp.textContent = "The name must be more than 3 and less than 20 characters!";
+            }
+            name = user_name;
+            nameP.textContent = `Name: ${user_name}`;
+            signdiv.style.display = "none";
+            maindiv.style.display = "block";
+        }
+        function on_command_create() {
+            messages += 1;
+            const command = document.getElementById("commands").value;
+            if (!command.trim()) return;
+            const message = document.createElement("li");
+            message.className = "usermessage";
+            message.id = `message_${messages}`;
+            const nameSpan = document.createElement("span");
+            nameSpan.style.color = "blue";
+            nameSpan.textContent = "[" + messages + "]" + name + ":";
+            const breaks = document.createElement("br");
+            const commandSpan = document.createElement("span");
+            commandSpan.textContent = command;
+            document.getElementById("commands").value = "";
+            message.appendChild(breaks);
+            message.appendChild(breaks);
+            message.appendChild(nameSpan);
+            message.appendChild(breaks);
+            message.appendChild(commandSpan);
+            messageL.appendChild(message);
+            messageL.scrollTop = messageL.scrollHeight;
+            const idk = command.split(" ");
+            const commandname = idk[0];
+            const does = idk[1];
+
+            if (commandname != "afi") {
+                return send_message(`'${commandname}' is not recognized as an internal or external command,operable program or batch file.`);
+            }
+            if (does === "hello" || does === "hi") {
+                send_message(`Hello, ${name}! I'm your assistance type afi help for helo`)
+            } else if (does === "help") {
+                send_message(`Hey ${name}, I'm Afi. Here are the commands:
+                - help: See this list.
+                - roll: Roll a random Blox Fruit.
+                - version: See current bot version.
+                - say [text]: Bot will say the [text].
+                - delete [no]: Delete message number [no].
+                
+                Note: Words inside [] are 'arguments'. Replace them with your text or number!`);
+            }
+            else if (does === "roll") {
+                const randomn = Math.floor(Math.random() * fruits.length);
+                const randomf = fruits[randomn];
+                send_message(`Congrats ${name}! You've rolled ${randomf}!`);
+            } else if (does === "version") {
+                send_message("I'm your assistance. My version is 1.00");
+            } else if (does === "say" || does === "tell") {
+                const illsay = idk.slice(2).join(" ");
+                if (!illsay) {
+                    return send_message("Provide a message first!");
+                }
+                send_message(illsay);
+            } else if (does === "delete" || does === "remove") {
+                const messagetd = idk[2];
+                const messagetdN = Number(messagetd);
+                if (!messagetd) {
+                    return send_message("Pls provide e message number first!");
+                }
+                if (isNaN(messagetdN)) {
+                    return send_message("The message no. must be in number!");
+                }
+                const messaged = document.getElementById("message_" + messagetdN);
+
+                if (!messaged) {
+                    return send_message(`${messagetd}no. message not found!`);
+                }
+                if (messaged.className != "usermessage") {
+                    return send_message("You can't delete service's message!");
+                }
+                messaged.remove();
+                send_message(`Message ${messagetd} has been deleted!`);
+            }else if(does === "clear"){
+                const s = document.querySelectorAll("#messagelist li")
+            }
+            else {
+                send_message(`Unknown command: ${does}. To see all afi commands, type: afi help`)
+            }
+        }
+        function send_message(text) {
+            messages += 1
+            const message = document.createElement("li");
+            message.className = "botmessage";
+            message.id = `message_${messages}`;
+            const nameSpan = document.createElement("span");
+            nameSpan.style.color = "blue";
+            nameSpan.textContent = "[" + messages + "]" + "(service)" + ":";
+            const breaks = document.createElement("br");
+            const messageSpan = document.createElement("span");
+            messageSpan.textContent = text;
+            message.appendChild(breaks);
+            message.appendChild(breaks);
+            message.appendChild(nameSpan);
+            message.appendChild(breaks);
+            message.appendChild(messageSpan);
+            messageL.appendChild(message);
+        }
+        window.onload = function (){
+            send_message("Type afi help for help");
+        };
+        
+        window.addEventListener('keydown', function (event) {
+            const isinput = event.target.tagName === "INPUT";
+            if (isinput) {
+                if (event.key === "Enter") {
+                    on_command_create();
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
