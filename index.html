@@ -53,6 +53,7 @@
             background-color: cyan;
             margin-top: 10px;
             word-break: break-all;
+            color: black;
         }
 
         .botmessage {
@@ -77,18 +78,19 @@
     </div>
 
     <script>
-        const fruits = ["rocket", "spin", "blade", "spring", "bomb", "smoke", "spike", "flame", "dark", "sand", "ice", "rubber", "eagle", "ghost", "light", "diamond", "quake", "magma", "love", "spider", "sound", "phoenix", "creation", "blizzard", "buddha", "portal", "shadow", "venom", "spirit", "mammonth", "gravity", "trex", "dough", "dough", "gas", "lightning", "tiger", "yeti", "kitsune", "control", "dragon", "dragoneast", "dragonweast"];
+        const fruits = ["rocket", "spin", "blade", "spring", "bomb", "smoke", "spike", "flame", "dark", "sand", "ice", "rubber", "eagle", "ghost", "light", "diamond", "quake", "magma", "love", "spider", "sound", "phoenix", "creation", "blizzard", "buddha", "portal", "shadow", "venom", "spirit", "mammonth", "gravity", "trex", "dough", "gas", "lightning", "tiger", "yeti", "kitsune", "control", "dragon", "dragoneast", "dragonwest"];
         const botname = "Afi";
         const messageL = document.getElementById("messagelist");
         const errorp = document.getElementById("error");
         let name;
         let messages = 0;
         const signdiv = document.getElementById("signin");
-            const maindiv = document.getElementById("main");
+        const maindiv = document.getElementById("main");
+        let cancreate = true;
         function sign() {
             const user_name = document.getElementById("name").value;
             const nameP = document.getElementById("username");
-            
+
             if (user_name.length > 20 || user_name.length < 3) {
                 return errorp.textContent = "The name must be more than 3 and less than 20 characters!";
             }
@@ -98,6 +100,7 @@
             maindiv.style.display = "block";
         }
         function on_command_create() {
+            if (!cancreate) { return }
             messages += 1;
             const command = document.getElementById("commands").value;
             if (!command.trim()) return;
@@ -117,10 +120,10 @@
             message.appendChild(breaks);
             message.appendChild(commandSpan);
             messageL.appendChild(message);
-            messageL.scrollTop = messageL.scrollHeight;
             const idk = command.split(" ");
             const commandname = idk[0];
             const does = idk[1];
+
 
             if (commandname != "afi") {
                 return send_message(`'${commandname}' is not recognized as an internal or external command,operable program or batch file.`);
@@ -128,14 +131,26 @@
             if (does === "hello" || does === "hi") {
                 send_message(`Hello, ${name}! I'm your assistance type afi help for help`)
             } else if (does === "help") {
-                send_message(`Hey ${name}, I'm Afi. Here are the commands:
-                - help: See this list.
-                - roll: Roll a random Blox Fruit.
-                - version: See current bot version.
-                - say [text]: Bot will say the [text].
-                - delete [no]: Delete message number [no].
-                
-                Note: Words inside [] are 'arguments'. Replace them with your text or number!`);
+                send_message(`Hey ${name}, I'm Afi. Here are my features:
+                - help : Show this command list.
+                - roll : Roll a random Blox Fruit.
+                - random [no] : Get a random number from 0 to [no].
+                - randomword [w1,w2] : Picks a random word from your list.
+                - say [text] : Make me repeat your [text].
+                - install [name] : Simulate a fake installation process.
+                - search [query] : Search anything on Google.
+                - open [link] : Open any website link directly.
+                - delete [no] : Remove message number [no].
+                - clear : Wipe the screen clean.
+                - time : Show current time (H:M:S).
+                - date : Show today's date (D/M/Y).
+                - day : Tell you what day it is today.
+                - fulltime : Tell you all time, date and day.
+                - info : See bot and owner information.
+                - changename : Restart and change your name.
+                - version : Show current version.
+
+                Note: Do not type []. Replace them with your words or numbers!`);
             }
             else if (does === "roll") {
                 const randomn = Math.floor(Math.random() * fruits.length);
@@ -168,14 +183,88 @@
                 }
                 messaged.remove();
                 send_message(`Message ${messagetd} has been deleted!`);
-            }else if(does === "clear"){
+            } else if (does === "clear") {
                 const allMessages = document.querySelectorAll("#messagelist li");
                 allMessages.forEach(msg => msg.remove());
                 messages = 0;
+            } else if (does === "random") {
+                const betweenR = idk[2];
+                if (!betweenR) {
+                    return send_message("Pls provide start number or end number first!");
+                }
+                const random = Math.floor(Math.random() * betweenR);
+                send_message(`Random number: ${random}`);
+            } else if (does === "install") {
+                const toInstall = idk[2];
+                if (!toInstall) {
+                    return send_message("Pls provide a name first!");
+                }
+                cancreate = false;
+                send_message(`Opening ${toInstall}... 1/5 This might take a moments`);
+                setTimeout(function () {
+                    send_message(`Collecting data from ${toInstall}... 2/5`);
+                    setTimeout(function () {
+                        send_message(`Loading the current version of ${toInstall}... 3/5`);
+                        setTimeout(function () {
+                            send_message(`Installing ${toInstall}... 4/5`);
+                            setTimeout(function () {
+                                send_message(`Successfully installed ${toInstall} at C://User/PCNAME/Downloads/${toInstall}! 5/5`);
+                                cancreate = true;
+                            }, 3000);
+                        }, 3000);
+                    }, 3000);
+                }, 3000);
+            } else if (does === "search") {
+                const url = idk.slice(2).join(" ");
+                const format = url.replaceAll(" ", "+");
+                if (!url) {
+                    return send_message("Pls provide a search first!");
+                }
+                window.open("https://www.google.com/search?q=" + format);
+                send_message(`Searching for ${format}...`);
+            } else if (does === "randomword" || does === "randomwords") {
+                const wta = idk.slice(2).join(" ");
+                const format = wta.split(",");
+                if (!wta) {
+                    return send_message("Pls provide words first!");
+                }
+                const randomN = Math.floor(Math.random() * format.length);
+                const randomW = format[randomN];
+                send_message(`Random words: ${randomW.trim()}`);
+            } else if (does === "changename" || does === "changenames") {
+                location.reload();
+            } else if (does === "open") {
+                const url = idk.slice(2).join(" ");
+                const format = url.replaceAll(" ", "+");
+                if (!url) {
+                    return send_message("Pls provide a link first!");
+                }
+                window.open(format);
+                send_message(`Opening ${url}...`)
+            } else if (does === "info" || does === "about") {
+                send_message(`I'm afi, your assistance. It was made for fun.
+                Owner: Afif Tahsin. My version: 1.00.
+                Type afi help if you need any help`);
+            } else if (does === "time") {
+                const now = new Date();
+                send_message(`Current time: ${now.toLocaleTimeString()} (Hours: Minutes: Seconds, Format)`);
+            } else if (does === "date") {
+                const now = new Date();
+                send_message(`Current date: ${now.toLocaleDateString()}(Date, Month, Year)`);
+            } else if (does === "day") {
+                const day = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",];
+                const now = new Date();
+                const today = day[now.getDay()];
+                send_message(`Today is ${today}`);
+            }else if(does === "fulltime"){
+                const day = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",];
+                const now = new Date();
+                send_message(`Today's time is: ${now.toLocaleTimeString()}, Today's date is ${now.toLocaleDateString()}, Today is ${day[now.getDay()]}`)
             }
             else {
-                send_message(`Unknown command: ${does}. To see all afi commands, type: afi help`)
+                send_message(`Unknown command: ${does}. To see all afi commands, type: afi help`);
             }
+            messageL.scrollTop = messageL.scrollHeight;
         }
         function send_message(text) {
             messages += 1
@@ -195,10 +284,10 @@
             message.appendChild(messageSpan);
             messageL.appendChild(message);
         }
-        window.onload = function (){
-            send_message("Type afi help for help");
+        window.onload = function () {
+            send_message(`Type afi help or press "?" for help`);
         };
-        
+
         window.addEventListener('keydown', function (event) {
             const isinput = event.target.tagName === "INPUT";
             if (isinput) {
@@ -206,6 +295,27 @@
                     on_command_create();
                 }
             }
+            if (!isinput){
+                if (event.key === "?") {
+                send_message(`Hey ${name}, I'm Afi. Here are my features:
+                - help : Show this command list.
+                - roll : Roll a random Blox Fruit.
+                - random [no] : Get a random number from 0 to [no].
+                - randomword [w1,w2] : Picks a random word from your list (use comma).
+                - say [text] : Make me repeat your [text].
+                - install [name] : Simulate a fake installation process.
+                - search [query] : Search anything on Google.
+                - open [link] : Open any website link directly.
+                - delete [no] : Remove message number [no].
+                - clear : Wipe the screen clean.
+                - info : See bot and owner information.
+                - changename : Restart and change your name.
+                - version : Show current version.
+
+                Note: Do not type []. Replace them with your words or numbers!`);
+            }
+            }
+            
         });
     </script>
 </body>
