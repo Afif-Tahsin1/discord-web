@@ -76,8 +76,18 @@
         <button onclick="on_command_create()">Create commands</button>
         <ol id="messagelist"></ol>
     </div>
-
-    <script>
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/generative-ai": "https://esm.run/@google/generative-ai"
+        }
+      }
+    </script>
+    <script type="module">
+        const apikey = process.env.API_KEY || "TESTING_KEY";
+        import { GoogleGenerativeAI } from "@google/generative-ai";
+        const genAi = new GoogleGenerativeAI(apikey);
+        const model = genAi.getGenerativeModel({ model: "gemini-3-flash-preview" });
         const fruits = ["rocket", "spin", "blade", "spring", "bomb", "smoke", "spike", "flame", "dark", "sand", "ice", "rubber", "eagle", "ghost", "light", "diamond", "quake", "magma", "love", "spider", "sound", "phoenix", "creation", "blizzard", "buddha", "portal", "shadow", "venom", "spirit", "mammonth", "gravity", "trex", "dough", "gas", "lightning", "tiger", "yeti", "kitsune", "control", "dragon", "dragoneast", "dragonwest"];
         const botname = "Afi";
         const messageL = document.getElementById("messagelist");
@@ -145,7 +155,6 @@
                 - time : Show current time (H:M:S).
                 - date : Show today's date (D/M/Y).
                 - day : Tell you what day it is today.
-                - fulltime : Tell you all time, date and day.
                 - info : See bot and owner information.
                 - changename : Restart and change your name.
                 - version : Show current version.
@@ -157,7 +166,7 @@
                 const randomf = fruits[randomn];
                 send_message(`Congrats ${name}! You've rolled ${randomf}!`);
             } else if (does === "version") {
-                send_message("I'm your assistance. My version is 1.00");
+                send_message("I'm your assistance. My version is 1.06 | Added ai features");
             } else if (does === "say" || does === "tell") {
                 const illsay = idk.slice(2).join(" ");
                 if (!illsay) {
@@ -256,10 +265,24 @@
                 const now = new Date();
                 const today = day[now.getDay()];
                 send_message(`Today is ${today}`);
-            }else if(does === "fulltime"){
+            } else if (does === "fulltime") {
                 const day = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",];
                 const now = new Date();
                 send_message(`Today's time is: ${now.toLocaleTimeString()}, Today's date is ${now.toLocaleDateString()}, Today is ${day[now.getDay()]}`)
+            } else if (does === "ai") {
+                const prompt = idk.slice(2).join(" ");
+                const fullmessage = `Hello, you are Afi CMD. I'm ${name}, prompt: ${prompt}. Version: 1.06 | Added ai features.:
+                `;
+                model.generateContent(fullmessage)
+                    .then(result => {
+                        const response = result.response;
+                        const text = response.text();
+                        send_message(text); // AI-er uttor-ta screen-e pathiye diche.
+                    })
+                    .catch(error => {
+                        // A-Z: Jodi API Key bhul hoy ba internet na thake, tobe error dekhabe.
+                        send_message("AI Error: " + error.message);
+                    });
             }
             else {
                 send_message(`Unknown command: ${does}. To see all afi commands, type: afi help`);
@@ -295,9 +318,9 @@
                     on_command_create();
                 }
             }
-            if (!isinput){
+            if (!isinput) {
                 if (event.key === "?") {
-                send_message(`Hey ${name}, I'm Afi. Here are my features:
+                    send_message(`Hey ${name}, I'm Afi. Here are my features:
                 - help : Show this command list.
                 - roll : Roll a random Blox Fruit.
                 - random [no] : Get a random number from 0 to [no].
@@ -313,11 +336,14 @@
                 - version : Show current version.
 
                 Note: Do not type []. Replace them with your words or numbers!`);
+                }
             }
-            }
-            
+
         });
+        window.sign = sign;
+        window.on_command_create = on_command_create;
     </script>
+
 </body>
 
 </html>
